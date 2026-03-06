@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  api:
+    build: https://github.com/vivienke/ghcn-temperature-api
+    ports:
+      - "8000:8000"
+    environment:
+      - CACHE_DIR=/cache
+      - METADATA_TTL_SEC=604800
+      - STATION_TTL_SEC=2592000
+      - STATION_CACHE_LIMIT=5
+      - HTTP_TIMEOUT_SEC=60
+    volumes:
+      - cache:/cache
+    restart: unless-stopped
+
+  frontend:
+    build: https://github.com/AlisAmandaCeaca/ghcn-temperature-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  cache:
